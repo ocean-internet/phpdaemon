@@ -1,0 +1,24 @@
+{
+    "name":        "ocean-internet/phpdaemon",
+    "description": "PHP daemon skeleton using the awesome react library",
+    "version":     "0.0.1",
+    "type":        "library",
+    "keywords":    ["php","daemon","react"],
+    "homepage":    "https://github.com/OceanInternet/phpdaemoni",
+    "license":     "GPL-2.0",
+    "authors": [
+        {
+            "name":     "Andy Weir",
+            "email":    "andy@ocean-internet.co.uk",
+            "homepage": "http://www.ocean-internet.co.uk",
+            "role":     "Developer"
+        }
+    ],
+    "support": {
+        "wiki":   "https://github.com/OceanInternet/phpdaemon/wiki",
+        "issues": "https://github.com/OceanInternet/phpdaemon/issues"
+    },
+    "require": {
+        "react/react": "0.4.*"
+    }
+}

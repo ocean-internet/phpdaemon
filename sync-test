@@ -1,0 +1,6 @@
+#!/bin/bash
+while [ 1 ];
+    do
+         wget -qO- http://127.0.0.1:1337 > /dev/null;
+         sleep 0.1;
+    done;

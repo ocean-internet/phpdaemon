@@ -1,0 +1,37 @@
+#!/bin/bash
+
+DATE=`date +"%T"`;
+
+echo -e "$DATE : Running async phpdaemon load test\n";
+
+while [ 1 ]
+do
+    WGETS=`ps -ef | grep -v grep | grep -c wget`;
+
+    while [ $WGETS -lt 4500 ]
+    do
+        FREEMEM=`free -mt | grep Mem | awk '{print $4}'`;
+        DATE=`date +"%T"`;
+        echo -en "\r\e[0K$DATE : Mem: $FREEMEM, Status: \e[1m\e[32mrunning\e[0m, Queue: $WGETS ";
+
+        while [ $FREEMEM -gt 512 ]
+        do
+            for i in $(seq 100);
+            do
+                wget -t 0 -bqO- http://127.0.0.1:1337 > /dev/null 2>&1;
+            done
+
+            WGETS=`ps -ef | grep -v grep | grep -c wget`;
+            FREEMEM=`free -mt | grep Mem | awk '{print $4}'`;
+            DATE=`date +"%T"`;
+            echo -en "\r\e[0K$DATE : Mem: $FREEMEM, Status: \e[1m\e[32mrunning\e[0m, Queue: $WGETS ";
+        done
+
+        WGETS=`ps -ef | grep -v grep | grep -c wget`;
+    done
+
+    FREEMEM=`free -mt | grep Mem | awk '{print $4}'`;
+    DATE=`date +"%T"`;
+    echo -en "\r\e[0K$DATE : Mem: $FREEMEM, Status: \e[1m\033[31mstopped\e[0m, Queue: $WGETS ";
+    sleep 1
+done
