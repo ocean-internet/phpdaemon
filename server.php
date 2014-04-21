@@ -35,9 +35,9 @@ class SocketServer {
 
     public function app($request, $response) {
 
-        $free = shell_exec("free -mt | grep Mem | awk '{print $4}'");
+        $freeMem = $this->getFreeMem();
 
-        if($free > 256) {
+        if($freeMem > 256) {
 
         $data = NULL;
 
@@ -82,9 +82,12 @@ class SocketServer {
 
         $this->loop->addPeriodicTimer(1, function ($timer) {
 
-            $stuff = sprintf("%s : Mem: %s, Processes: %d, %d ",
+            $freeMem = $this->getFreeMem();
+
+            $stuff = sprintf("%s : Mem: %s, Free: %d, Processes: %d, %d ",
                 date('H:i:s'),
-                number_format(memory_get_usage()),
+                number_format(memory_get_usage(TRUE)),
+                $freeMem,
                 $this->processes,
                 $this->totalProcesses
             );
@@ -107,6 +110,11 @@ class SocketServer {
 
         $this->socket->shutdown();
         $this->loop->stop();
+    }
+
+    protected function getFreeMem() {
+
+        return shell_exec("free -mt | grep Mem | awk '{print $4}'");
     }
 }
 
