@@ -14,7 +14,7 @@ do
         DATE=`date +"%T"`;
         echo -en "\r\e[0K$DATE : Mem: $FREEMEM, Status: \e[1m\e[32mrunning\e[0m, Queue: $WGETS ";
 
-        while [ $FREEMEM -gt 512 ]
+        while [ $FREEMEM -gt 1024 ]
         do
             for i in $(seq 100);
             do
