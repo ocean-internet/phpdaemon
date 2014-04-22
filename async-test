@@ -12,7 +12,7 @@ do
     do
         FREEMEM=`free -mt | grep Mem | awk '{print $4}'`;
 
-        while [ $FREEMEM -gt 512 ]
+        while [ $FREEMEM -gt 1024 ]
         do
             WGETS=`ps -ef | grep -v grep | grep -c wget`;
             FREEMEM=`free -mt | grep Mem | awk '{print $4}'`;

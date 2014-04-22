@@ -37,6 +37,8 @@ class SocketServer {
 
         $freeMem = $this->getFreeMem();
 
+        $headers = array('Content-Type' => 'text/plain');
+
         if($freeMem > 512) {
 
             $data = NULL;
@@ -45,9 +47,8 @@ class SocketServer {
 
             $process = new Process('php childProcess.php');
 
-            $process->on('exit', function($exitCode, $termSignal) use ($response, &$data) {
+            $process->on('exit', function($exitCode, $termSignal) use ($response, &$data, $headers) {
 
-                $headers = array('Content-Type' => 'text/plain');
                 $response->writeHead(200, $headers);
                 $response->end($data);
 
@@ -62,12 +63,21 @@ class SocketServer {
 
                 $data += $output;
             });
+            
+            $process->close();
+            
+            unset($data);
+            unset($process);
+            
         } else {
 
-            $headers = array('Content-Type' => 'text/plain');
             $response->writeHead(500, $headers);
             $response->end();
         }
+        
+        unset($headers);
+        unset($request);
+        unset($response);
     }
 
     public function run() {
