@@ -36,27 +36,42 @@ class SocketServer {
     public function app($request, $response) {
 
         $freeMem = $this->getFreeMem();
-
         $headers = array('Content-Type' => 'text/plain');
 
         if($freeMem > 512) {
 
-            $data = NULL;
-
-            $this->totalProcesses++;
-
+            $data    = NULL;
             $process = new Process('php childProcess.php');
 
-            $process->on('exit', function($exitCode, $termSignal) use ($response, &$data, $headers) {
+            $process->on('exit', function($exitCode, $termSignal) use (&$response, &$data, &$headers, &$process) {
 
                 $response->writeHead(200, $headers);
                 $response->end($data);
 
+                $process->close();
+
                 $this->processes--;
+
+                fwrite(
+                    STDOUT,
+                   $data . "\n"
+                );
+
+                unset($exitCode);
+                unset($termSignal);
+
+                unset($request);
+                unset($response);
+
+                unset($headers);
+
+                unset($data);
+                unset($process);
             });
 
             $process->start($this->loop);
 
+            $this->totalProcesses++;
             $this->processes++;
 
             $process->stdout->on('data', function($output) use (&$data) {
@@ -64,20 +79,17 @@ class SocketServer {
                 $data += $output;
             });
             
-            $process->close();
-            
-            unset($data);
-            unset($process);
-            
         } else {
 
             $response->writeHead(500, $headers);
             $response->end();
+
+            unset($headers);
+            unset($request);
+            unset($response);
         }
-        
-        unset($headers);
-        unset($request);
-        unset($response);
+
+        unset($freeMem);
     }
 
     public function run() {
